@@ -6,9 +6,10 @@ Private and secure (and cheap to host)
 
 ## Setup
 
-1. Install npm dependencies:
+1. Install dependencies:
 ```bash
 npm install
+go get
 ```
 
 2. Run the server:
