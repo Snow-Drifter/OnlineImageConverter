@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Converter</title>
+    <link rel="stylesheet" href="/style.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "@ffmpeg/ffmpeg": "/node_modules/@ffmpeg/ffmpeg/dist/esm/index.js",
+            "@ffmpeg/util": "/node_modules/@ffmpeg/util/dist/esm/index.js"
+        }
+    }
+    </script>
+    <script type="module" src="/script.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Converter</h1>
+        
+        <form id="convert-form" onsubmit="handleConvert(event); return false;">
+            <label for="image" class="upload-area">
+                <input type="file" id="image" accept="image/*" required>
+                <span class="upload-text">Choose image</span>
+                <img id="preview" class="preview" style="display: none;">
+            </label>
+            
+            <label for="filename" class="filename-label">Output filename</label>
+            <div class="filename-row">
+                <input type="text" id="filename" placeholder="output" required>
+                <span>.</span>
+                <input type="text" id="extension" placeholder="png" required>
+            </div>
+            
+            <button type="submit" id="convertBtn" disabled>Convert</button>
+            
+            <div id="error-message" class="error-message" style="display: none;"></div>
+        </form>
+    </div>
+</body>
+</html>
