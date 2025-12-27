@@ -16,27 +16,33 @@
     <script type="module" src="/script.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Image Converter</h1>
-        
-        <form id="convert-form" onsubmit="handleConvert(event); return false;">
-            <label for="image" class="upload-area">
-                <input type="file" id="image" accept="image/*" required>
-                <span class="upload-text">Choose image</span>
-                <img id="preview" class="preview" style="display: none;">
-            </label>
-            
-            <label for="filename" class="filename-label">Output filename</label>
-            <div class="filename-row">
-                <input type="text" id="filename" placeholder="output" required>
-                <span>.</span>
-                <input type="text" id="extension" placeholder="png" required>
+    <h1>Image Converter</h1>
+    
+    <form id="convert-form" onsubmit="handleConvert(event); return false;">
+        <div class="converter-grid">
+            <div class="box input-box">
+                <h2>Input</h2>
+                <label for="image" class="upload-area">
+                    <input type="file" id="image" accept="image/*" required>
+                    <span class="upload-text">Choose image</span>
+                    <img id="preview" class="preview" style="display: none;">
+                </label>
             </div>
             
-            <button type="submit" id="convertBtn" disabled>Convert</button>
-            
-            <div id="error-message" class="error-message" style="display: none;"></div>
-        </form>
-    </div>
+            <div class="box output-box">
+                <h2>Output</h2>
+                <label for="filename" class="filename-label">Filename</label>
+                <div class="filename-row">
+                    <input type="text" id="filename" placeholder="output" required>
+                    <span>.</span>
+                    <input type="text" id="extension" placeholder="png" required>
+                </div>
+                
+                <button type="submit" id="convertBtn" disabled>Convert</button>
+            </div>
+        </div>
+        
+        <div id="error-message" class="error-message" style="display: none;"></div>
+    </form>
 </body>
 </html>
