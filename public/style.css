@@ -78,6 +78,25 @@ form {
     color: #888;
 }
 
+.upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    pointer-events: none;
+}
+
+.upload-note {
+    font-size: 0.7rem;
+    color: #999;
+    text-align: center;
+    font-weight: 500;
+}
+
+.output-box .upload-note {
+    margin-top: 0.75rem;
+}
+
 .preview {
     max-width: 100%;
     max-height: 200px;

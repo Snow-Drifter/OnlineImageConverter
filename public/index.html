@@ -16,7 +16,7 @@
     <script type="module" src="/script.js"></script>
 </head>
 <body>
-    <h1>Image Converter</h1>
+    <h1>Private Image Converter</h1>
     
     <form id="convert-form" onsubmit="handleConvert(event); return false;">
         <div class="converter-grid">
@@ -24,7 +24,10 @@
                 <h2>Input</h2>
                 <label for="image" class="upload-area">
                     <input type="file" id="image" accept="image/*" required>
-                    <span class="upload-text">Drop image here or click to choose</span>
+                    <div class="upload-content">
+                        <span class="upload-text">Select image</span>
+                        <span class="upload-note">Not uploaded, shared, or stored.</span>
+                    </div>
                     <img id="preview" class="preview" style="display: none;">
                 </label>
             </div>
@@ -33,12 +36,13 @@
                 <h2>Output</h2>
                 <label for="filename" class="filename-label">Filename</label>
                 <div class="filename-row">
-                    <input type="text" id="filename" placeholder="output" required>
+                    <input type="text" id="filename" placeholder="output">
                     <span>.</span>
-                    <input type="text" id="extension" placeholder="png" required>
+                    <input type="text" id="extension" placeholder="png">
                 </div>
                 
                 <button type="submit" id="convertBtn" disabled>Convert</button>
+                <p class="upload-note">Conversion happens entirely in your browser. Your images never leave your device.</p>
             </div>
         </div>
         
