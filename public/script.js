@@ -12,20 +12,20 @@ async function initFFmpeg() {
 
 function updateButton() {
     const file = document.getElementById('image').files[0];
-    const filename = document.getElementById('filename').value.trim();
-    const extension = document.getElementById('extension').value.trim();
     const btn = document.getElementById('convertBtn');
-    btn.disabled = !file || !filename || !extension || !ffmpeg?.loaded;
+    btn.disabled = !file || !ffmpeg?.loaded;
 }
 
 async function handleConvert(event) {
     event.preventDefault();
     
     const file = document.getElementById('image').files[0];
-    const filename = document.getElementById('filename').value.trim();
-    const extension = document.getElementById('extension').value.trim();
+    const filenameInput = document.getElementById('filename');
+    const extensionInput = document.getElementById('extension');
+    const filename = filenameInput.value.trim() || filenameInput.placeholder;
+    const extension = extensionInput.value.trim() || extensionInput.placeholder;
     
-    if (!file || !filename || !extension) return;
+    if (!file) return;
     
     await initFFmpeg();
     
@@ -37,29 +37,45 @@ async function handleConvert(event) {
     const inputName = `input.${inputExt}`;
     const outputName = `output.${format}`;
     
-    await ffmpeg.writeFile(inputName, await fetchFile(file));
-    await ffmpeg.exec(['-i', inputName, '-y', outputName]);
+    const errorMessage = document.getElementById('error-message');
+    errorMessage.style.display = 'none';
     
-    const data = await ffmpeg.readFile(outputName);
-    const blob = new Blob([data], { type: `image/${format}` });
-    const url = URL.createObjectURL(blob);
-    
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = outputFilename;
-    a.click();
-    
-    setTimeout(() => URL.revokeObjectURL(url), 100);
-    await ffmpeg.deleteFile(inputName);
-    await ffmpeg.deleteFile(outputName);
+    try {
+        await ffmpeg.writeFile(inputName, await fetchFile(file));
+        const exitCode = await ffmpeg.exec(['-i', inputName, '-y', outputName]);
+        
+        if (exitCode !== 0) {
+            throw new Error('Conversion failed');
+        }
+        
+        const data = await ffmpeg.readFile(outputName);
+        const blob = new Blob([data], { type: `image/${format}` });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = outputFilename;
+        a.click();
+        
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+        await ffmpeg.deleteFile(outputName);
+    } catch (err) {
+        errorMessage.textContent = `Couldn't convert ${inputExt} to ${format}.`;
+        errorMessage.style.display = 'block';
+    } finally {
+        try { await ffmpeg.deleteFile(inputName); } catch {}
+    }
 }
 
 window.handleConvert = handleConvert;
 
 window.addEventListener('DOMContentLoaded', () => {
     const imageInput = document.getElementById('image');
+    imageInput.value = '';
+    document.getElementById('convertBtn').disabled = true;
     const preview = document.getElementById('preview');
     const uploadText = document.querySelector('.upload-text');
+    const uploadNote = document.querySelector('.upload-content .upload-note');
     const uploadArea = document.querySelector('.upload-area');
     
     imageInput.addEventListener('change', () => {
@@ -70,6 +86,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 preview.src = e.target.result;
                 preview.style.display = 'block';
                 uploadText.style.display = 'none';
+                if (uploadNote) uploadNote.style.display = 'none';
             };
             reader.readAsDataURL(file);
         }
@@ -87,7 +104,19 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    document.getElementById('filename').addEventListener('input', updateButton);
-    document.getElementById('extension').addEventListener('input', updateButton);
+    const filenameInput = document.getElementById('filename');
+    const extensionInput = document.getElementById('extension');
+    
+    filenameInput.addEventListener('input', (e) => {
+        const value = filenameInput.value;
+        if (value.includes('.')) {
+            const lastDot = value.lastIndexOf('.');
+            filenameInput.value = value.slice(0, lastDot);
+            extensionInput.value = value.slice(lastDot + 1);
+            extensionInput.focus();
+        }
+        updateButton();
+    });
+    extensionInput.addEventListener('input', updateButton);
     initFFmpeg().then(updateButton);
 });
