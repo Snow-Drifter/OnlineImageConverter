@@ -60,7 +60,8 @@ async function handleConvert(event) {
         }
         
         const data = await ffmpeg.readFile(outputName);
-        const blob = new Blob([data], { type: `image/${format}` });
+        const mimeType = format === 'jpg' ? 'image/jpeg' : `image/${format}`;
+        const blob = new Blob([data], { type: mimeType });
         const url = URL.createObjectURL(blob);
         
         const a = document.createElement('a');
@@ -69,12 +70,12 @@ async function handleConvert(event) {
         a.click();
         
         setTimeout(() => URL.revokeObjectURL(url), 100);
-        await ffmpeg.deleteFile(outputName);
     } catch (err) {
         errorMessage.textContent = `Couldn't convert ${inputExt} to ${format}.`;
         errorMessage.style.display = 'block';
     } finally {
         try { await ffmpeg.deleteFile(inputName); } catch {}
+        try { await ffmpeg.deleteFile(outputName); } catch {}
         isConverting = false;
         updateButton();
     }
