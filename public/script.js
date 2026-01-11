@@ -81,9 +81,8 @@ async function handleConvert(event) {
     }
 }
 
-window.handleConvert = handleConvert;
-
 window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('convert-form').addEventListener('submit', handleConvert);
     const imageInput = document.getElementById('image');
     imageInput.value = '';
     document.getElementById('convertBtn').disabled = true;
