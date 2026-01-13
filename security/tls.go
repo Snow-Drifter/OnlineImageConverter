@@ -4,6 +4,8 @@ import (
 	"crypto/tls"
 	"log"
 	"net/http"
+	"os"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/acme"
@@ -19,9 +21,14 @@ type Config struct {
 }
 
 func DefaultConfig() *Config {
+	hosts := os.Getenv("IMAGE_CONVERTER_HOSTS")
+	if hosts == "" {
+		log.Fatal("IMAGE_CONVERTER_HOSTS is not set")
+	}
+
 	return &Config{
 		CertCacheDir: "/var/cache/image-converter/autocert",
-		AllowedHosts: []string{"superigloo.com", "www.superigloo.com"},
+		AllowedHosts: strings.Split(hosts, ","),
 		UseStaging:   true,
 		HTTPPort:     ":80",
 		HTTPSPort:    ":443",
